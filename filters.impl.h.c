@@ -149,23 +149,23 @@ static inline void filters_apply_brightness_contrast(
 
         "movl (%%esp), %%eax\n\t"
         "cmpl %%edx, %%eax\n\t"
-        "cmoval %%edx, %%eax\n\t"
+        "cmovgl %%edx, %%eax\n\t"
         "cmpl %%edi, %%eax\n\t"
-        "cmovbl %%edi, %%eax\n\t"
+        "cmovll %%edi, %%eax\n\t"
         "movb %%al, (%2,%3)\n\t"
 
         "movl 0x4(%%esp), %%eax\n\t"
         "cmpl %%edx, %%eax\n\t"
-        "cmoval %%edx, %%eax\n\t"
+        "cmovgl %%edx, %%eax\n\t"
         "cmpl %%edi, %%eax\n\t"
-        "cmovbl %%edi, %%eax\n\t"
+        "cmovll %%edi, %%eax\n\t"
         "movb %%al, 0x1(%2,%3)\n\t"
 
         "movl 0x8(%%esp), %%eax\n\t"
         "cmpl %%edx, %%eax\n\t"
-        "cmoval %%edx, %%eax\n\t"
+        "cmovgl %%edx, %%eax\n\t"
         "cmpl %%edi, %%eax\n\t"
-        "cmovbl %%edi, %%eax\n\t"
+        "cmovll %%edi, %%eax\n\t"
         "movb %%al, 0x2(%2,%3)\n\t"
 
         "addl $0x1c, %%esp\n\t"
@@ -220,23 +220,23 @@ static inline void filters_apply_brightness_contrast(
 
         "movq (%%rsp), %%rax\n\t"
         "cmpq %%rdx, %%rax\n\t"
-        "cmovaq %%rdx, %%rax\n\t"
+        "cmovgq %%rdx, %%rax\n\t"
         "cmpq %%r8, %%rax\n\t"
-        "cmovbq %%r8, %%rax\n\t"
+        "cmovlq %%r8, %%rax\n\t"
         "movb %%al, (%2,%3)\n\t"
 
         "movq 0x8(%%rsp), %%rax\n\t"
         "cmpq %%rdx, %%rax\n\t"
-        "cmovaq %%rdx, %%rax\n\t"
+        "cmovgq %%rdx, %%rax\n\t"
         "cmpq %%r8, %%rax\n\t"
-        "cmovbq %%r8, %%rax\n\t"
+        "cmovlq %%r8, %%rax\n\t"
         "movb %%al, 0x1(%2,%3)\n\t"
 
         "movq 0x10(%%rsp), %%rax\n\t"
         "cmpq %%rdx, %%rax\n\t"
-        "cmovaq %%rdx, %%rax\n\t"
+        "cmovgq %%rdx, %%rax\n\t"
         "cmpq %%r8, %%rax\n\t"
-        "cmovbq %%r8, %%rax\n\t"
+        "cmovlq %%r8, %%rax\n\t"
         "movb %%al, 0x2(%2,%3)\n\t"
 
         "addq $0x38, %%rsp\n\t"
@@ -395,17 +395,17 @@ static inline void filters_apply_sepia(
 
         "movl 0x8(%%esp), %%eax\n\t"
         "cmpl %%edx, %%eax\n\t"
-        "cmoval %%edx, %%eax\n\t"
+        "cmovgl %%edx, %%eax\n\t"
         "movb %%al, (%1,%2)\n\t"
 
         "movl 0xc(%%esp), %%eax\n\t"
         "cmpl %%edx, %%eax\n\t"
-        "cmoval %%edx, %%eax\n\t"
+        "cmovgl %%edx, %%eax\n\t"
         "movb %%al, 0x1(%1,%2)\n\t"
 
         "movl 0x10(%%esp), %%eax\n\t"
         "cmpl %%edx, %%eax\n\t"
-        "cmoval %%edx, %%eax\n\t"
+        "cmovgl %%edx, %%eax\n\t"
         "movb %%al, 0x2(%1,%2)\n\t"
 
         "addl $0x14, %%esp\n\t"
@@ -475,12 +475,12 @@ static inline void filters_apply_sepia(
 
         "movq 0x18(%%rsp), %%rax\n\t"
         "cmpq %%rdx, %%rax\n\t"
-        "cmovaq %%rdx, %%rax\n\t"
+        "cmovgq %%rdx, %%rax\n\t"
         "movb %%al, 0x1(%1,%2)\n\t"
 
         "movq 0x20(%%rsp), %%rax\n\t"
         "cmpq %%rdx, %%rax\n\t"
-        "cmovaq %%rdx, %%rax\n\t"
+        "cmovgq %%rdx, %%rax\n\t"
         "movb %%al, 0x2(%1,%2)\n\t"
 
         "addq $0x28, %%rsp\n\t"
