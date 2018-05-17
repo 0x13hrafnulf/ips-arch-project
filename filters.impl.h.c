@@ -264,7 +264,7 @@ static inline void filters_apply_brightness_contrast(
         "vfmadd132ps %%zmm1, %%zmm2, %%zmm0\n\t"
         "vcvtps2udq %%zmm0, %%zmm0\n\t"
 	
-	    "movl $0xff, %%edx\n\t"
+	"movl $0xff, %%edx\n\t"
     	"movl $0x0, %%eax\n\t"
         "vpbroadcastd %%edx, %%zmm2\n\t"
         "vpbroadcastd %%eax, %%zmm1\n\t"
@@ -293,17 +293,17 @@ static inline void filters_apply_brightness_contrast(
         "vfmadd132ps %%zmm1, %%zmm2, %%zmm0\n\t"
         "vcvtps2dq %%zmm0, %%zmm0\n\t"
 
-	    "movl $0xff, %%edx\n\t"
-	    "movl $0x0, %%eax\n\t"
+	"movl $0xff, %%edx\n\t"
+	"movl $0x0, %%eax\n\t"
         "vpbroadcastd %%edx, %%zmm2\n\t"
         "vpbroadcastd %%eax, %%zmm1\n\t"
 
-	    "vpcmpgtd %%zmm2, %%zmm0, %%k1\n\t"
+	"vpcmpgtd %%zmm2, %%zmm0, %%k1\n\t"
     	"vmovdqa32 %%zmm2, %%zmm0%{%%k1%}\n\t"
     	"vpcmpgtd %%zmm0, %%zmm1, %%k1\n\t"
     	"vmovdqa32 %%zmm1, %%zmm0%{%%k1%}\n\t"
         
-	    "vpmovusdb %%zmm0, (%2, %3)\n\t"
+	"vpmovusdb %%zmm0, (%2, %3)\n\t"
     ::
         "S"(&brightness), "D"(&contrast), "b"(pixels), "c"(position)
     :
