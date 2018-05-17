@@ -600,7 +600,7 @@ static inline void filters_apply_median(
 
 #elif defined FILTERS_SIMD_ASM_IMPLEMENTATION
 
-    uint8_t first[] = {6,7,4,5,2,3,0,1};
+    	uint8_t first[] = {6,7,4,5,2,3,0,1};
 	uint8_t second[] = {4,5,6,7,0,1,2,3};
 	uint8_t third[] = {0,1,2,3,4,5,6,7};
 	uint8_t forth[] = {5,4,7,6,1,0,3,2};
@@ -614,11 +614,11 @@ static inline void filters_apply_median(
 #elif defined x86_64_CPU
 
         __asm__ __volatile__ (
-         "vpmovzxbq (%0), %%zmm0\n\t"//input
+        "vpmovzxbq (%0), %%zmm0\n\t"//input
 
-	    "vpmovzxbq (%1), %%zmm1\n\t"//first
+    	"vpmovzxbq (%1), %%zmm1\n\t"//first
     	"vpmovzxbq (%2), %%zmm2\n\t"//second
-	    "vpmovzxbq (%3), %%zmm3\n\t"//third
+	"vpmovzxbq (%3), %%zmm3\n\t"//third
     	"vpmovzxbq (%4), %%zmm4\n\t"//forth
     
 
@@ -636,7 +636,7 @@ static inline void filters_apply_median(
     	"kmovw %%eax, %%k1\n\t"
     	"vmovdqa64 %%zmm7, %%zmm0%{%%k1%}\n\t"//in zmm0
 
-	    "vpermq %%zmm0, %%zmm1, %%zmm5\n\t"//first
+    	"vpermq %%zmm0, %%zmm1, %%zmm5\n\t"//first
     	"vpminuq %%zmm0, %%zmm5, %%zmm6\n\t"
     	"vpmaxuq %%zmm0, %%zmm5, %%zmm7\n\t"
     	"movl $0xAA, %%eax\n\t"
@@ -661,11 +661,11 @@ static inline void filters_apply_median(
     	"vpminuq %%zmm6, %%zmm5, %%zmm0\n\t"
     	"vpmaxuq %%zmm6, %%zmm5, %%zmm7\n\t"
     	"movl $0xAA, %%eax\n\t"
-	    "kmovw %%eax, %%k1\n\t"
+	"kmovw %%eax, %%k1\n\t"
     	"vmovdqa64 %%zmm7, %%zmm0%{%%k1%}\n\t"
 
     	"vpmovusqb %%zmm0, (%0)\n\t"
-	     ::
+     	::
     	"S"(window), "D"(first), "b"(second), "c"(third), "d"(forth)
     	:
     	"%zmm1", "%zmm2", "%zmm3", "%zmm4"
