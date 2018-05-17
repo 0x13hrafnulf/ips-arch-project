@@ -262,8 +262,20 @@ static inline void filters_apply_brightness_contrast(
         "vpmovzxbd (%2, %3), %%zmm0\n\t"
         "vcvtdq2ps %%zmm0, %%zmm0\n\t"
         "vfmadd132ps %%zmm1, %%zmm2, %%zmm0\n\t"
-        "vcvtps2dq %%zmm0, %%zmm0\n\t"
-        "vpmovusdb %%zmm0, (%2, %3)\n\t"
+        "vcvtps2udq %%zmm0, %%zmm0\n\t"
+	
+	    "movl $0xff, %%edx\n\t"
+    	"movl $0x0, %%eax\n\t"
+        "vpbroadcastd %%edx, %%zmm2\n\t"
+        "vpbroadcastd %%eax, %%zmm1\n\t"
+        
+    	"vpcmpgtd %%zmm2, %%zmm0, %%k1\n\t"
+    	"vmovdqa32 %%zmm2, %%zmm0%{%%k1%}\n\t"
+    	"vpcmpgtd %%zmm0, %%zmm1, %%k1\n\t"
+    	"vmovdqa32 %%zmm1, %%zmm0%{%%k1%}\n\t"
+        
+
+    	"vpmovusdb %%zmm0, (%2, %3)\n\t"
     ::
         "S"(&brightness), "D"(&contrast), "b"(pixels), "c"(position)
     :
@@ -274,13 +286,24 @@ static inline void filters_apply_brightness_contrast(
 
     // Process 16 color channels at the same time.
     __asm__ __volatile__ (
-        "vbroadcastss (%0), %%zmm2\n\t"
+       "vbroadcastss (%0), %%zmm2\n\t"
         "vbroadcastss (%1), %%zmm1\n\t"
         "vpmovzxbd (%2, %3), %%zmm0\n\t"
         "vcvtdq2ps %%zmm0, %%zmm0\n\t"
         "vfmadd132ps %%zmm1, %%zmm2, %%zmm0\n\t"
         "vcvtps2dq %%zmm0, %%zmm0\n\t"
-        "vpmovusdb %%zmm0, (%2, %3)\n\t"
+
+	    "movl $0xff, %%edx\n\t"
+	    "movl $0x0, %%eax\n\t"
+        "vpbroadcastd %%edx, %%zmm2\n\t"
+        "vpbroadcastd %%eax, %%zmm1\n\t"
+
+	    "vpcmpgtd %%zmm2, %%zmm0, %%k1\n\t"
+    	"vmovdqa32 %%zmm2, %%zmm0%{%%k1%}\n\t"
+    	"vpcmpgtd %%zmm0, %%zmm1, %%k1\n\t"
+    	"vmovdqa32 %%zmm1, %%zmm0%{%%k1%}\n\t"
+        
+	    "vpmovusdb %%zmm0, (%2, %3)\n\t"
     ::
         "S"(&brightness), "D"(&contrast), "b"(pixels), "c"(position)
     :
@@ -577,6 +600,11 @@ static inline void filters_apply_median(
 
 #elif defined FILTERS_SIMD_ASM_IMPLEMENTATION
 
+    uint8_t first[] = {6,7,4,5,2,3,0,1};
+	uint8_t second[] = {4,5,6,7,0,1,2,3};
+	uint8_t third[] = {0,1,2,3,4,5,6,7};
+	uint8_t forth[] = {5,4,7,6,1,0,3,2};
+    
 #if defined x86_32_CPU
 
         __asm__ __volatile__ (
@@ -586,7 +614,61 @@ static inline void filters_apply_median(
 #elif defined x86_64_CPU
 
         __asm__ __volatile__ (
-            "\n\t" :::
+         "vpmovzxbq (%0), %%zmm0\n\t"//input
+
+	    "vpmovzxbq (%1), %%zmm1\n\t"//first
+    	"vpmovzxbq (%2), %%zmm2\n\t"//second
+	    "vpmovzxbq (%3), %%zmm3\n\t"//third
+    	"vpmovzxbq (%4), %%zmm4\n\t"//forth
+    
+
+    	"vpermq %%zmm0, %%zmm1, %%zmm5\n\t"//first
+    	"vpminuq %%zmm0, %%zmm5, %%zmm6\n\t"
+    	"vpmaxuq %%zmm0, %%zmm5, %%zmm7\n\t"
+    	"movl $0xAA, %%eax\n\t"
+    	"kmovw %%eax, %%k1\n\t"
+    	"vmovdqa64 %%zmm7, %%zmm6%{%%k1%}\n\t"//bitonic seq in zmm6
+
+    	"vpermq %%zmm6, %%zmm2, %%zmm5\n\t"//second
+    	"vpminuq %%zmm6, %%zmm5, %%zmm0\n\t"
+    	"vpmaxuq %%zmm6, %%zmm5, %%zmm7\n\t"
+    	"movl $0xCC, %%eax\n\t"
+    	"kmovw %%eax, %%k1\n\t"
+    	"vmovdqa64 %%zmm7, %%zmm0%{%%k1%}\n\t"//in zmm0
+
+	    "vpermq %%zmm0, %%zmm1, %%zmm5\n\t"//first
+    	"vpminuq %%zmm0, %%zmm5, %%zmm6\n\t"
+    	"vpmaxuq %%zmm0, %%zmm5, %%zmm7\n\t"
+    	"movl $0xAA, %%eax\n\t"
+    	"kmovw %%eax, %%k1\n\t"
+    	"vmovdqa64 %%zmm7, %%zmm6%{%%k1%}\n\t"
+
+    	"vpermq %%zmm6, %%zmm3, %%zmm2\n\t"//third
+    	"vpminuq %%zmm6, %%zmm5, %%zmm0\n\t"
+    	"vpmaxuq %%zmm6, %%zmm5, %%zmm7\n\t"
+    	"movl $0xF0, %%eax\n\t"
+    	"kmovw %%eax, %%k1\n\t"
+    	"vmovdqa64 %%zmm7, %%zmm0%{%%k1%}\n\t"
+
+    	"vpermq %%zmm0, %%zmm4, %%zmm5\n\t"//forth
+    	"vpminuq %%zmm0, %%zmm5, %%zmm6\n\t"
+    	"vpmaxuq %%zmm0, %%zmm5, %%zmm7\n\t"
+    	"movl $0xCC, %%eax\n\t"
+    	"kmovw %%eax, %%k1\n\t"
+    	"vmovdqa64 %%zmm7, %%zmm6%{%%k1%}\n\t"
+
+    	"vpermq %%zmm6, %%zmm1, %%zmm5\n\t"//first
+    	"vpminuq %%zmm6, %%zmm5, %%zmm0\n\t"
+    	"vpmaxuq %%zmm6, %%zmm5, %%zmm7\n\t"
+    	"movl $0xAA, %%eax\n\t"
+	    "kmovw %%eax, %%k1\n\t"
+    	"vmovdqa64 %%zmm7, %%zmm0%{%%k1%}\n\t"
+
+    	"vpmovusqb %%zmm0, (%0)\n\t"
+	     ::
+    	"S"(window), "D"(first), "b"(second), "c"(third), "d"(forth)
+    	:
+    	"%zmm1", "%zmm2", "%zmm3", "%zmm4"
         );
 
 #else
