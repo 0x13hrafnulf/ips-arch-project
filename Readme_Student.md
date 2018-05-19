@@ -15,8 +15,7 @@ Just as like as in the first case, I had to modify this code to manage negative 
 Just as like as with the Part #1, no major problems occured. Clarification of minor problems were solved by using documentation listed below.
 
 * Assembly Language for x86 Processors, 7th Edition by Kip R. Irvine.
-
-*[SIMPLY FPU, by Raymond Filiatreault.](http://www.website.masmforum.com/tutorials/fptute/index.html)
+* [SIMPLY FPU, by Raymond Filiatreault.](http://www.website.masmforum.com/tutorials/fptute/index.html)
 
 ## Part 4, The Median Filter
 Based on the part #2, I was able to manage to implement the bitonic sort suggested in the paper for 8 values. Yet, there were some confussions in the beggining which sort to use, since there were two types of sort suggested: bitonic sort, quick sort (partition). Had to check another paper by the same author to clarify this moment, which provided several sorting algorithms, and suggested to use bitonic sort among them by comparing them with the "std::sort". 
@@ -28,6 +27,5 @@ As a result, my implementation was about 2 times faster(37-40sec) than "c optimi
 1) Merging of 2 vector registers
 2) Using another similar implementation of the code, but for the 16 values (lines 2633-2716, sort-512.hpp from 2nd link below)
 
-*[Fast Sorting Algorithms using AVX-512 on Intel Knights Landing.](https://hal.inria.fr/hal-01512970v1/document)
-
-*[avx-512-sort, by Berenger Bramas.](https://gitlab.mpcdf.mpg.de/bbramas/avx-512-sort)
+* [Fast Sorting Algorithms using AVX-512 on Intel Knights Landing.](https://hal.inria.fr/hal-01512970v1/document)
+* [avx-512-sort, by Berenger Bramas.](https://gitlab.mpcdf.mpg.de/bbramas/avx-512-sort)
