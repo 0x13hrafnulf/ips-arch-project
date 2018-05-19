@@ -3,7 +3,6 @@ In this part, there were no major problems. Two information sources were used as
 Yet there were some minor ones, like the adjustments for the negative brightness (passing negative brightness). There reason is in the list of commands that were used for comparisons to clamp the pixel values (cmovb and cmova), which are used for unsigned values. Thus, when passing negative brightness, signed flag were ignored in this case. Therefore, I changed those commands to (cmovg and cmovl) to solve this issue.
 
 * Assembly Language for x86 Processors, 7th Edition by Kip R. Irvine.
-
 * [SIMPLY FPU, by Raymond Filiatreault.](http://www.website.masmforum.com/tutorials/fptute/index.html)
 
 ## Part #2, Brightness and Contrast Adjustments with SIMD AVX-512 Instructions
