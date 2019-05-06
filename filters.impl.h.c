@@ -664,11 +664,21 @@ static inline void filters_apply_median(
 
 #elif defined FILTERS_SIMD_ASM_IMPLEMENTATION
 
-    	uint8_t first[] = {6,7,4,5,2,3,0,1};
-	uint8_t second[] = {4,5,6,7,0,1,2,3};
-	uint8_t third[] = {0,1,2,3,4,5,6,7};
-	uint8_t forth[] = {5,4,7,6,1,0,3,2};
-    
+    	//uint8_t firstA[] = {14, 15, 12, 13, 10, 11, 8, 9};
+	uint8_t first[] = {6, 7, 4, 5, 2, 3, 0, 1};
+	
+	//uint8_t secondA[] = {12, 13, 14, 15, 8, 9, 10, 11};
+	uint8_t second[] = {4, 5, 6, 7, 0, 1, 2, 3};
+	
+	//uint8_t thirdA[] = {8, 9, 10, 11, 12, 13, 14, 15};
+	uint8_t third[] = {0, 1, 2, 3, 4, 5, 6, 7};
+	
+	//uint8_t forthA[] = {13, 12, 15, 14, 9, 8, 11, 10};
+	uint8_t forth[] = {5, 4, 7, 6, 1, 0, 3, 2};
+	
+	//uint8_t fifthA[] = {11, 10, 9, 8, 15, 14, 13, 12};
+	//uint8_t fifth[] = {3, 2, 1, 0, 7, 6, 5, 4};
+
 #if defined x86_32_CPU
 
         __asm__ __volatile__ (
