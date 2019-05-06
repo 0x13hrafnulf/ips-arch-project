@@ -339,24 +339,25 @@ static inline void filters_apply_sepia(
         pixels[position];
     uint32_t green =
         pixels[position + 1];
+    uint32_t red = pixels[position + 2];
 
     pixels[position] =
         (uint8_t) UTILS_MIN(
-                      Sepia_Coefficients[0] * blue  +
+                      Sepia_Coefficients[0] * red  +
                       Sepia_Coefficients[1] * green +
                       Sepia_Coefficients[2] * blue,
                       255.0f
                   );
     pixels[position + 1] =
         (uint8_t) UTILS_MIN(
-                      Sepia_Coefficients[3] * blue  +
+                      Sepia_Coefficients[3] * red  +
                       Sepia_Coefficients[4] * green +
                       Sepia_Coefficients[5] * blue,
                       255.0f
                   );
     pixels[position + 2] =
         (uint8_t) UTILS_MIN(
-                      Sepia_Coefficients[6] * blue  +
+                      Sepia_Coefficients[6] * red  +
                       Sepia_Coefficients[7] * green +
                       Sepia_Coefficients[8] * blue,
                       255.0f
@@ -368,7 +369,7 @@ static inline void filters_apply_sepia(
 
     // Similar, but not a one to one conversion of the C code above. Try to find in what way.
     __asm__ __volatile__ (
-        "subl $0x14, %%esp\n\t"
+        "subl $0x18, %%esp\n\t"
 
         "xorl %%eax, %%eax\n\t"
 
@@ -378,60 +379,64 @@ static inline void filters_apply_sepia(
         "movb 0x1(%1,%2), %%al\n\t"
         "movl %%eax, 0x4(%%esp)\n\t"
 
-        "filds (%%esp)\n\t"
+        "movb 0x2(%1,%2), %%al\n\t"
+        "movl %%eax, 0x8(%%esp)\n\t"
+        
+	"filds 0x8(%%esp)\n\t"
         "filds 0x4(%%esp)\n\t"
+	"filds (%%esp)\n\t"
 
         "flds (%0)\n\t"
-        "fmul %%st(2), %%st\n\t"
+        "fmul %%st(3), %%st\n\t"
         "flds 0x4(%0)\n\t"
-        "fmul %%st(2), %%st\n\t"
+        "fmul %%st(3), %%st\n\t"
         "flds 0x8(%0)\n\t"
-        "fmul %%st(4), %%st\n\t"
-        "faddp\n\t"
-        "faddp\n\t"
-        "fistpl 0x8(%%esp)\n\t"
-
-        "flds 0xc(%0)\n\t"
-        "fmul %%st(2), %%st\n\t"
-        "flds 0x10(%0)\n\t"
-        "fmul %%st(2), %%st\n\t"
-        "flds 0x14(%0)\n\t"
-        "fmul %%st(4), %%st\n\t"
+        "fmul %%st(3), %%st\n\t"
         "faddp\n\t"
         "faddp\n\t"
         "fistpl 0xc(%%esp)\n\t"
 
-        "flds 0x18(%0)\n\t"
-        "fmul %%st(2), %%st\n\t"
-        "flds 0x1c(%0)\n\t"
-        "fmul %%st(2), %%st\n\t"
-        "flds 0x20(%0)\n\t"
-        "fmul %%st(4), %%st\n\t"
+        "flds 0xc(%0)\n\t"
+        "fmul %%st(3), %%st\n\t"
+        "flds 0x10(%0)\n\t"
+        "fmul %%st(3), %%st\n\t"
+        "flds 0x14(%0)\n\t"
+        "fmul %%st(3), %%st\n\t"
         "faddp\n\t"
         "faddp\n\t"
         "fistpl 0x10(%%esp)\n\t"
+
+        "flds 0x18(%0)\n\t"
+        "fmul %%st(3), %%st\n\t"
+        "flds 0x1c(%0)\n\t"
+        "fmul %%st(3), %%st\n\t"
+        "flds 0x20(%0)\n\t"
+        "fmul %%st(3), %%st\n\t"
+        "faddp\n\t"
+        "faddp\n\t"
+        "fistpl 0x14(%%esp)\n\t"
 
         "fstp %%st\n\t"
         "fstp %%st\n\t"
 
         "movl $0xff, %%edx\n\t"
 
-        "movl 0x8(%%esp), %%eax\n\t"
+        "movl 0xc(%%esp), %%eax\n\t"
         "cmpl %%edx, %%eax\n\t"
         "cmovgl %%edx, %%eax\n\t"
         "movb %%al, (%1,%2)\n\t"
 
-        "movl 0xc(%%esp), %%eax\n\t"
+        "movl 0x10(%%esp), %%eax\n\t"
         "cmpl %%edx, %%eax\n\t"
         "cmovgl %%edx, %%eax\n\t"
         "movb %%al, 0x1(%1,%2)\n\t"
 
-        "movl 0x10(%%esp), %%eax\n\t"
+        "movl 0x14(%%esp), %%eax\n\t"
         "cmpl %%edx, %%eax\n\t"
         "cmovgl %%edx, %%eax\n\t"
         "movb %%al, 0x2(%1,%2)\n\t"
 
-        "addl $0x14, %%esp\n\t"
+        "addl $0x18, %%esp\n\t"
     ::
         "S"(Sepia_Coefficients),
         "b"(pixels), "c"(position)
@@ -443,7 +448,7 @@ static inline void filters_apply_sepia(
 
     // Similar, but not a one to one conversion of the C code above. Try to find in what way.
     __asm__ __volatile__ (
-        "subq $0x28, %%rsp\n\t"
+        "subq $0x30, %%rsp\n\t"
 
         "xorq %%rax, %%rax\n\t"
 
@@ -453,60 +458,66 @@ static inline void filters_apply_sepia(
         "movb 0x1(%1,%2), %%al\n\t"
         "movq %%rax, 0x8(%%rsp)\n\t"
 
-        "fildl (%%rsp)\n\t"
+        "movb 0x2(%1,%2), %%al\n\t"
+        "movq %%rax, 0x10(%%rsp)\n\t"
+        
+	"fildl 0x10(%%rsp)\n\t"
         "fildl 0x8(%%rsp)\n\t"
+	"fildl (%%rsp)\n\t"
 
         "flds (%0)\n\t"
-        "fmul %%st(2), %%st\n\t"
+        "fmul %%st(3), %%st\n\t"
         "flds 0x4(%0)\n\t"
-        "fmul %%st(2), %%st\n\t"
+        "fmul %%st(3), %%st\n\t"
         "flds 0x8(%0)\n\t"
-        "fmul %%st(4), %%st\n\t"
-        "faddp\n\t"
-        "faddp\n\t"
-        "fistpq 0x10(%%rsp)\n\t"
-
-        "flds 0xc(%0)\n\t"
-        "fmul %%st(2), %%st\n\t"
-        "flds 0x10(%0)\n\t"
-        "fmul %%st(2), %%st\n\t"
-        "flds 0x14(%0)\n\t"
-        "fmul %%st(4), %%st\n\t"
+        "fmul %%st(3), %%st\n\t"
         "faddp\n\t"
         "faddp\n\t"
         "fistpq 0x18(%%rsp)\n\t"
 
-        "flds 0x18(%0)\n\t"
-        "fmul %%st(2), %%st\n\t"
-        "flds 0x1c(%0)\n\t"
-        "fmul %%st(2), %%st\n\t"
-        "flds 0x20(%0)\n\t"
-        "fmul %%st(4), %%st\n\t"
+        "flds 0xc(%0)\n\t"
+        "fmul %%st(3), %%st\n\t"
+        "flds 0x10(%0)\n\t"
+        "fmul %%st(3), %%st\n\t"
+        "flds 0x14(%0)\n\t"
+        "fmul %%st(3), %%st\n\t"
         "faddp\n\t"
         "faddp\n\t"
+
         "fistpq 0x20(%%rsp)\n\t"
 
+        "flds 0x18(%0)\n\t"
+        "fmul %%st(3), %%st\n\t"
+        "flds 0x1c(%0)\n\t"
+        "fmul %%st(3), %%st\n\t"
+        "flds 0x20(%0)\n\t"
+        "fmul %%st(3), %%st\n\t"
+        "faddp\n\t"
+        "faddp\n\t"
+        "fistpq 0x28(%%rsp)\n\t"
+	
+        "fstp %%st\n\t"
         "fstp %%st\n\t"
         "fstp %%st\n\t"
 
         "movq $0xff, %%rdx\n\t"
 
-        "movq 0x10(%%rsp), %%rax\n\t"
+        "movq 0x18(%%rsp), %%rax\n\t"
         "cmpq %%rdx, %%rax\n\t"
         "cmovaq %%rdx, %%rax\n\t"
         "movb %%al, (%1,%2)\n\t"
 
-        "movq 0x18(%%rsp), %%rax\n\t"
+        "movq 0x20(%%rsp), %%rax\n\t"
         "cmpq %%rdx, %%rax\n\t"
         "cmovgq %%rdx, %%rax\n\t"
         "movb %%al, 0x1(%1,%2)\n\t"
 
-        "movq 0x20(%%rsp), %%rax\n\t"
+        "movq 0x28(%%rsp), %%rax\n\t"
         "cmpq %%rdx, %%rax\n\t"
         "cmovgq %%rdx, %%rax\n\t"
         "movb %%al, 0x2(%1,%2)\n\t"
 
-        "addq $0x28, %%rsp\n\t"
+        "addq $0x30, %%rsp\n\t"
     ::
         "S"(Sepia_Coefficients),
         "b"(pixels), "c"(position)
@@ -520,6 +531,10 @@ static inline void filters_apply_sepia(
 
 #elif defined FILTERS_SIMD_ASM_IMPLEMENTATION
 
+float coffs[] = {0.272f, 0.349f, 0.393f, 1.0f, 
+		0.534f, 0.686f, 0.769f, 1.0f, 
+		0.131f, 0.168f, 0.189f, 1.0f};
+
 #if defined x86_32_CPU
 
     __asm__ __volatile__ (
@@ -528,8 +543,57 @@ static inline void filters_apply_sepia(
 
 #elif defined x86_64_CPU
 
-    __asm__ __volatile__ (
-        "\n\t" :::
+
+      __asm__ __volatile__ (
+       
+	"vmovups (%3), %%xmm1\n\t" //Sepia coeffs reds
+        "vmovups 0x10(%3), %%xmm2\n\t" //Sepia coeffs greens
+        "vmovups 0x20(%3), %%xmm3\n\t" //Sepia coeffs blues
+	
+
+	"movb 0x3(%1,%2), %%al\n\t"//save 4th value	
+
+
+	"movb (%1,%2), %%bl\n\t"
+	"vpbroadcastd %%ebx, %%xmm5\n\t"//blue 
+	"vcvtdq2ps %%xmm5, %%xmm5\n\t"
+
+	"mov 0x1(%1, %2), %%bl\n\t"
+	"vpbroadcastd %%ebx, %%xmm6\n\t"//green 
+	"vcvtdq2ps %%xmm6, %%xmm6\n\t"
+
+	"mov 0x2(%1, %2), %%bl\n\t"
+	"vpbroadcastd %%ebx, %%xmm7\n\t"//red 
+	"vcvtdq2ps %%xmm7, %%xmm7\n\t"
+	
+	"vmulps %%xmm1, %%xmm7, %%xmm7\n\t"
+	"vmulps %%xmm2, %%xmm6, %%xmm6\n\t"
+	"vmulps %%xmm3, %%xmm5, %%xmm5\n\t"
+
+	"vaddps %%xmm7, %%xmm6, %%xmm0\n\t"
+	"vaddps %%xmm5, %%xmm0, %%xmm0\n\t"
+	"vcvtps2dq %%xmm0, %%xmm0\n\t"
+
+
+	"movl $0xff, %%ebx\n\t"
+        "vpbroadcastd %%ebx, %%xmm8\n\t"
+	"movl $0x0, %%ebx\n\t"
+        "vpbroadcastd %%ebx, %%xmm9\n\t"
+	
+	"vpcmpgtd %%xmm8, %%xmm0, %%k1\n\t"
+    	"vmovdqa32 %%xmm8, %%xmm0%{%%k1%}\n\t"
+	"vpcmpgtd %%xmm0, %%xmm9, %%k1\n\t"
+    	"vmovdqa32 %%xmm9, %%xmm0%{%%k1%}\n\t"
+        
+	
+	"vpmovusdb %%xmm0, (%1, %2)\n\t"
+	"movb %%al, 0x3(%1,%2)\n\t"//restore 4th value	
+
+::
+	"S"(Sepia_Coefficients), "D"(pixels), "c"(position)
+	,"d"(coffs)  
+:
+	"%zmm1", "%zmm2", "%zmm3", "%zmm0" 
     );
 
 #else
