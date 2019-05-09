@@ -577,14 +577,9 @@ float coffs[] = {0.272f, 0.349f, 0.393f, 1.0f,
 
 	"movl $0xff, %%ebx\n\t"
         "vpbroadcastd %%ebx, %%xmm8\n\t"
-	"movl $0x0, %%ebx\n\t"
-        "vpbroadcastd %%ebx, %%xmm9\n\t"
 	
 	"vpcmpgtd %%xmm8, %%xmm0, %%k1\n\t"
     	"vmovdqa32 %%xmm8, %%xmm0%{%%k1%}\n\t"
-	"vpcmpgtd %%xmm0, %%xmm9, %%k1\n\t"
-    	"vmovdqa32 %%xmm9, %%xmm0%{%%k1%}\n\t"
-        
 	
 	"vpmovusdb %%xmm0, (%1, %2)\n\t"
 	"movb %%al, 0x3(%1,%2)\n\t"//restore 4th value	
