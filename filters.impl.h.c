@@ -755,3 +755,125 @@ static inline void filters_apply_median(
     }
 }
 
+
+/*
+#elif defined FILTERS_SIMD_ASM_IMPLEMENTATION
+
+In filters_threading.impl.h.c change FILTERS_SIMD_ASM_IMPLEMENTATION step to 12
+
+float coffs[] = {0.272f, 0.272f, 0.272f, 0.272f, //red1
+                 0.349f, 0.349f, 0.349f, 0.349f, //red2
+                 0.393f, 0.393f, 0.393f, 0.393f, //red3
+                 0.534f, 0.534f, 0.534f, 0.534f, //green1
+                 0.686f, 0.686f, 0.686f, 0.686f, //green2
+                 0.769f, 0.769f, 0.769f, 0.769f, //green3
+                 0.131f, 0.131f, 0.131f, 0.131f, //blue1
+                 0.168f, 0.168f, 0.168f, 0.168f, //blue2
+                 0.189f, 0.189f, 0.189f, 0.189f  //blue3
+                };
+
+uint8_t pixels_b[4];
+uint8_t pixels_g[4];
+uint8_t pixels_r[4];
+
+for(int i = 0; i < 4; ++i)
+{
+        pixels_b[i] = pixels[position + i * 3];
+        pixels_g[i] = pixels[position + i * 3 + 1];
+        pixels_r[i] = pixels[position + i * 3 + 2];
+
+}
+
+
+#if defined x86_32_CPU
+
+    __asm__ __volatile__ (
+        "\n\t" :::
+    );
+
+#elif defined x86_64_CPU
+
+
+      __asm__ __volatile__ (
+
+        "vpmovzxbd (%0), %%xmm1\n\t" //blues
+        "vpmovzxbd (%1), %%xmm2\n\t" //greens
+        "vpmovzxbd (%2), %%xmm3\n\t" //reds
+
+        "vmovups (%3), %%xmm4\n\t" //r1
+        "vmovups 0x10(%3), %%xmm5\n\t" //r2
+        "vmovups 0x20(%3), %%xmm6\n\t" //r3
+        "vmovups 0x30(%3), %%xmm7\n\t" //g1
+        "vmovups 0x40(%3), %%xmm8\n\t" //g2
+        "vmovups 0x50(%3), %%xmm9\n\t" //g3
+        "vmovups 0x60(%3), %%xmm10\n\t" //b1
+        "vmovups 0x70(%3), %%xmm11\n\t" //b2
+        "vmovups 0x80(%3), %%xmm12\n\t" //b3
+
+
+        "vcvtdq2ps  %%xmm1, %%xmm1\n\t"
+        "vcvtdq2ps  %%xmm2, %%xmm2\n\t"
+        "vcvtdq2ps  %%xmm3, %%xmm3\n\t"
+
+
+
+
+        //reds
+        "vmulps      %%xmm3, %%xmm4, %%xmm4\n\t"
+        "vmulps      %%xmm3, %%xmm5, %%xmm5\n\t"
+        "vmulps      %%xmm3, %%xmm6, %%xmm6\n\t"
+
+        //greens
+        "vmulps      %%xmm2, %%xmm7, %%xmm7\n\t"
+        "vmulps      %%xmm2, %%xmm8, %%xmm8\n\t"
+        "vmulps      %%xmm2, %%xmm9, %%xmm9\n\t"
+
+        //blues
+        "vmulps      %%xmm1, %%xmm10, %%xmm10\n\t"
+        "vmulps      %%xmm1, %%xmm11, %%xmm11\n\t"
+        "vmulps      %%xmm1, %%xmm12, %%xmm12\n\t"
+
+        //result for blue values
+        "vaddps      %%xmm7, %%xmm4, %%xmm1\n\t"
+        "vaddps      %%xmm1, %%xmm10, %%xmm1\n\t"
+
+        //result for green values
+        "vaddps      %%xmm8, %%xmm5, %%xmm2\n\t"
+        "vaddps      %%xmm2, %%xmm11, %%xmm2\n\t"
+
+        //result for red values
+        "vaddps      %%xmm9, %%xmm6, %%xmm3\n\t"
+        "vaddps      %%xmm3, %%xmm12, %%xmm3\n\t"
+
+        "vcvtps2dq  %%xmm1, %%xmm1\n\t"
+        "vcvtps2dq  %%xmm2, %%xmm2\n\t"
+        "vcvtps2dq  %%xmm3, %%xmm3\n\t"
+
+
+        "vpmovusdb  %%xmm1, (%0)\n\t"//blue
+        "vpmovusdb  %%xmm2, (%1)\n\t"//green
+        "vpmovusdb  %%xmm3, (%2)\n\t"//red
+::
+        "S"(pixels_b), "D"(pixels_g), "c"(pixels_r)
+        ,"d"(coffs)
+:
+        "%zmm0", "%zmm1", "%zmm2", "%zmm3", "zmm5",
+        "%zmm6", "%zmm7", "%zmm8", "%zmm9", "zmm10",
+        "%zmm11", "%zmm12"
+    );
+
+for(int i = 0; i < 4; ++i)
+{
+        pixels[position + i * 3] = pixels_b[i];
+        pixels[position + i * 3 + 1] = pixels_g[i];
+        pixels[position + i * 3 + 2] = pixels_r[i];
+}
+
+
+#else
+#error "Unsupported processor architecture"
+#endif
+
+#endif
+
+*/
