@@ -261,7 +261,7 @@ make profile
 
 * [Fast Sorting Algorithms using AVX-512 on Intel Knights Landing. Berenger Bramas, 2017](https://hal.inria.fr/hal-01512970v1/document)
 
-* [Berenger Bramas, AVX-512 sorting functions. Gitlab] (https://gitlab.mpcdf.mpg.de/bbramas/avx-512-sort)
+* [Berenger Bramas, AVX-512 sorting functions. Gitlab](https://gitlab.mpcdf.mpg.de/bbramas/avx-512-sort)
 
 ## Documentation
 
