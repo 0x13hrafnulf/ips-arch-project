@@ -257,7 +257,11 @@ make profile
 
 * [Image Processing Acceleration Techniques using Intel Streaming SIMD Extensions](https://software.intel.com/en-us/articles/image-processing-acceleration-techniques-using-intel-streaming-simd-extensions-and-intel-advanced-vector-extensions)
 
-* [A Novel Hybrid Quicksort Algorithm Vectorized using AVX-512 on Intel Skylake](https://arxiv.org/pdf/1704.08579.pdf)
+* [A Novel Hybrid Quicksort Algorithm Vectorized using AVX-512 on Intel Skylake. Berenger Bramas, 2017](https://arxiv.org/pdf/1704.08579.pdf)
+
+* [Fast Sorting Algorithms using AVX-512 on Intel Knights Landing. Berenger Bramas, 2017](https://hal.inria.fr/hal-01512970v1/document)
+
+* [Berenger Bramas, AVX-512 sorting functions. Gitlab] (https://gitlab.mpcdf.mpg.de/bbramas/avx-512-sort)
 
 ## Documentation
 
