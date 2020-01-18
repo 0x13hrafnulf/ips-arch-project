@@ -294,6 +294,8 @@ make profile
 
 * [Linux assemblers: A comparison of GAS and NASM](https://www.ibm.com/developerworks/library/l-gas-nasm/index.html)
 * [GAS Syntax](https://en.wikibooks.org/wiki/X86_Assembly/GAS_Syntax)
+* [Inline assembly-1](https://www.ibiblio.org/gferg/ldp/GCC-Inline-Assembly-HOWTO.html)
+* [Inline assembly-2](https://www.codeproject.com/Articles/15971/Using-Inline-Assembly-in-C-C)
 
 ## Books
 
